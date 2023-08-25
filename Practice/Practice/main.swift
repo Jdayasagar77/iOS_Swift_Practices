@@ -135,67 +135,70 @@ import CryptoKit
  
  */
 
+
 /*
- 
  
  //Strong Retain Cycles for Closures
  
  // Example 1
  class Human {
- var humanClosure: (()->())?
- var name:String
- init(name: String){
- self.name = name
- humanClosure = {
- [weak self] in
- //[unowned self] in // This will throw an error, find out why...!
- guard let self = self else {
- return
- }
- 
- print("\(self.name) is initialized")
- }
- }
- deinit {
- print("\(self.name) is deinitialized")
- }
+     var humanClosure: (()->())?
+     var name:String
+     init(name: String) {
+        self.name = name
+         humanClosure = {
+                [weak self] in
+                //[unowned self] in // This will throw an error, find out why...!
+                guard let self = self else {
+                    return
+                }
+                print("\(self.name) is initialized")
+            }
+        }
+     deinit {
+         print("\(self.name) is deinitialized")
+     }
  }
  
  var aot: Human? = Human(name: "Eren Yeager")
  print(aot?.name)
  aot?.humanClosure!()
  aot = nil
- //aot?.humanClosure = nil
+ aot?.humanClosure = nil
+print(aot?.name)
+
  //aot  = nil
- */
+
+*/
 
 /*
  
  // Example 2
  class Human {
- var name:String
- init(name: String) {
- self.name = name
- print("\(self.name) is initialized")
- }
- deinit {
- print("\(self.name) is deinitialized")
- }
- func closureMe(){
- DispatchQueue.main.asyncAfter(deadline: .now()+5 ){
- [weak self] in
- if let self = self {
- print("\(self.name) your closure executed now..!!")
- }
- }
- }
+     var name:String
+     init(name: String) {
+         self.name = name
+         print("\(self.name) is initialized")
+     }
+     deinit {
+         print("\(self.name) is deinitialized")
+     }
+     
+     func closureMe()   {
+         DispatchQueue.main.asyncAfter(deadline: .now()+5 ){
+//             [weak self] in
+//             if let self = self {
+                 print("\(self.name) your closure executed now..!!")
+          //   }
+         }
+     }
  }
  
  var daya:Human? = Human(name: "Daya")
  daya?.closureMe()
- //daya = nil
+//daya = nil
  
- */
+*/
 
 // Computed Property
 
@@ -798,28 +801,48 @@ import CryptoKit
 //var numbers = [12, 4, 5, 6, 7, 3, 1, 15]
 //print(numbers.count)
 
-
-
 /*
+ 
  //Fibonacci Series
+ // [0, 1], 1, 2, 3, 5, 8, 13, 21, 34,..
  
  func fibonacciWithoutRecursion(n: Int) {
- var fibSeries: [Int] = [0, 1]
+        var fibSeries: [Int] = [0, 1]
+            for i in 2..<n {
+                let nextFib = fibSeries[i - 1] + fibSeries[i - 2]
+                fibSeries.append(nextFib)
+            }
+        print("Fibonacci Series (without recursion):", fibSeries)
+    }
+// let n = 10
+// fibonacciWithoutRecursion(n: n)
  
- for i in 2..<n {
- let nextFib = fibSeries[i - 1] + fibSeries[i - 2]
- fibSeries.append(nextFib)
- }
+
+func fibonacciWithRecursion(n:Int) -> Int {
+    if n <= 0 {
+        return 0
+    } else if n == 1 {
+        return 1
+    } else {
+        return fibonacciWithRecursion(n: n - 1) + fibonacciWithRecursion(n: n + 1)
+    }
+}
  
- print("Fibonacci Series (without recursion):", fibSeries)
- }
- let n = 10
- fibonacciWithoutRecursion(n: n)
- 
+func printFibonacciSeries() {
+    let input = readLine(strippingNewline: false) ?? ""
+    var fibSeries: [Int] = []
+    for i in 0..<(Int(input) ?? 0) {
+        fibSeries.append(fibonacciWithRecursion(n: i))
+    }
+    print("Fibonacci Series (with recursion):", fibSeries)
+    
+}
+
+printFibonacciSeries()
+
  */
-
-
-
+ 
+ 
 /*
  //Prime Numbers
  
@@ -829,20 +852,33 @@ import CryptoKit
  let num = Int(num1 ?? "")!
  if num <= 1 {
  return false
- }
+    }
  for i in 2..<num  {
  if num % i == 0 {
  return false
- }
- }
+        }
+    }
  return true
  }
  
- print(isPrime)
+ print(isPrime())
  
- */
+*/
 
-if let str = readLine() {
-    print(str)
+/*
+ // Palindrome
+ 
+func isPalindrome() -> Bool? {
+    
+    guard let input = readLine() else {
+        return nil
+    }
+    
+    let content = String(input)
+    let reverse = String(content.reversed())
+    return content == reverse
 }
 
+print(isPalindrome() ?? false)
+ 
+*/
