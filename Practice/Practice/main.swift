@@ -9,49 +9,41 @@ import Foundation
 import CryptoKit
 
 
-//Stored Property
-
 /*
- 
- class Story {
- var num:Int
- lazy var pi = 3.147
- init(num: Int) {
- self.num = num
- }
- }
- 
- let jungle = Story(num: 9)
- jungle.num = 5
- jungle.pi = 4
- print(jungle.num)
- print(jungle.pi)
- 
- */
 
+// Lazy and Stored Property
 
-// Lazy Stored Property
+//Note: Remember, the point of lazy properties is that they are computed only when they are first needed, after which their value is saved. So, if you call the iOSResumeDescription for the second time, the previously saved value is returned.
 
-/*
- class Student{
- var name: String
- var num: Int
- init(name: String,num: Int){ // You can observe that classes need initializers but struct don't
- self.name = name
- self.num = num
- }
- }
- 
- struct Emp {
- let name: String
- let date: String
- lazy var age = Student(name: "Daya", num: 77)
- }
- 
- var john = Emp(name: "John", date: "jjjj")
- print(john)
- //print(john.age)
- */
+class Student {
+    var name: String = "DJ77"
+    var num: Int
+    lazy var pi = 3.14
+    init(name: String,num: Int) { // You can observe that classes need initializers but struct don't
+        print(self.name)
+        self.name = name
+        self.num = num
+    }
+    deinit {
+        print(pi)
+    }
+}
+
+struct Emp {
+    let name: String
+    let date: String
+    lazy var age: Student? = Student(name: "Daya", num: 77)
+}
+
+var john = Emp(name: "John", date: "jjjj")
+print(john)
+print(john.age as Any)
+john.age = nil
+print(john)
+print(john.age as Any)
+
+*/
+
 
 // Factorial
 
@@ -74,48 +66,57 @@ import CryptoKit
 
 
 
+/*
 
 // ARC and Memory Management
+ 
+// Using Weak Reference
+ 
+class Person1{
+    let name: String
+    init(name: String) {
+        self.name = name
+        print("\(self.name) Memory Allocated")
+    }
+    //  unowned var daya: Person2?
+    weak var daya: Person2? {
+        didSet{
+            print("\(self)")
+        }
+    }
+    deinit{
+        print("\(self.name) Memory Deallocated")
+    }
+}
 
-/*
- 
- // Using Weak Reference
- class Person1{
- let name: String
- init(name: String) {
- self.name = name
- print("Person1 Memory Allocated")
- }
- //  unowned var daya: Person2?
- weak var daya: Person2?
- deinit{
- print("Person1 Memory Deallocated")
- }
- }
- 
- class Person2{
- let name: String
- init(name: String) {
- self.name = name
- print("Person2 Memory Allocated")
- }
- var john: Person1?
- deinit{
- print("Person2 Memory Deallocated")
- }
- }
- 
- var personA: Person1?
- personA = Person1(name: "John") // Person A = 1
- var personB: Person2?
- personB = Person2(name: "Daya") // Person B = 1
- 
- personA?.daya = personB // Person B = 2
- personB?.john = personA // Person A = 2
- 
- personA = nil // if not weak or unowned, Person A = 1
- personB = nil // if not weak or unowned, Person B = 1
- */
+class Person2{
+    let name: String
+    init(name: String) {
+        self.name = name
+        print("\(self.name) Memory Allocated")
+    }
+    var john: Person1? {
+        didSet{
+            print("\(self)")
+        }
+    }
+    deinit{
+        print("\(self.name) Memory Deallocated")
+    }
+}
+
+var personA: Person1?
+personA = Person1(name: "John") // Person A = 1
+var personB: Person2?
+personB = Person2(name: "Daya") // Person B = 1
+personA?.daya = personB // Person B = 2
+personB?.john = personA // Person A = 2
+personA = nil // if not weak or unowned, Person A = 1
+personB = nil // if not weak or unowned, Person B = 1
+
+
+*/
+
 
 /*
  
@@ -200,159 +201,160 @@ print(aot?.name)
  
 */
 
+/*
+
 // Computed Property
 
-/*
- struct Circly {
- let radius: Int
- var area: Double {
- get {
- Double(radius*radius)*Double.pi
- }
- }
- }
- 
- let myGol = Circly(radius: 4)
- myGol.area
- print(myGol)
- print(myGol.area)
- */
+class Student {
+    var extraMarks = 5
+    var eng: Int
+    var math: Int
+    var total: Int {
+        get{
+            eng+math+extraMarks
+        }
+        set(myMarks){
+            self.extraMarks = myMarks
+        }
+    }
+    var myGol: Bool {
+        if total >= 60 {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    init(math : Int, englishMarks: Int){
+        self.eng = englishMarks
+        self.math = math
+    }
 
-/*
- class Student {
- var extraMarks = 5
- var eng: Int
- var math: Int
- init(math : Int, englishMarks: Int){
- self.eng = englishMarks
- self.math = math
- }
- var total: Int {
- get{
- eng+math+extraMarks
- }
- set(myMarks){
- self.extraMarks = myMarks
- }
- }
- }
- let daya = Student(math: 8, englishMarks: 77)
+}
+    
+let daya = Student(math: 8, englishMarks: 77)
  print(daya.total)
  daya.total = 100
  print(daya.total)
  print(daya.extraMarks)
- */
+print(daya.myGol)
 
-// Property Observers
+*/
 
-/*
- 
- //For Classes
- 
- class Bank {
- var accountBal: Double {
- didSet {
- print("New Value Set Bro : \(accountBal)")
- }
- willSet(myBal){
- if(myBal>=100000){
- print("Bro this is HUGE")
- }
- }
- }
- init(openingBal: Double){
- self.accountBal = openingBal
- }
- func addMoney(amount: Double){
- accountBal = accountBal + amount
- }
- }
- 
- let mySBI = Bank(openingBal: 20000)
- mySBI.addMoney(amount: 100000)
- 
- */
+
 
 /*
- // For structs
+
+// Property Observers and Nested Types
+
+ struct Bank2 {
+    
+    var myBank: Bank1?
+    // Notice all the difference between classes and struct scenarios, mutating,var and let constant for objects
+    init(myBank: Bank1? = nil) {
+        self.myBank = myBank
+        print("My Bank is \(String(describing: myBank))")
+    }
+    mutating  func addMoney(amount: Double){
+        myBank?.accountBal = (myBank?.accountBal ?? 0) + amount
+    }
+    
+    class Bank1 {
+        var accountBal: Double {
+            didSet {
+                print("New Value Set Bro : \(accountBal)")
+            }
+            willSet(myBal){
+                if(myBal>=100000){
+                    print("Bro this is HUGE")
+                }else if (myBal<=5000){
+                    print("Bro..You need to earn more..!!!")
+                } else {
+                    print("Bro.. Itna Paisa kamake kya karlega")
+                }
+            }
+        }
+        init(openingBal: Double){
+            self.accountBal = openingBal
+        }
+    }// Class ends here
+    
+}// Struct ends here
+
+var sbi = Bank2()
+sbi.myBank = Bank2.Bank1(openingBal: 100)
+sbi.addMoney(amount: 1000)
+
+*/
  
- struct Bank {
- var accountBal: Double {
- didSet {
- print("New Value Set Bro : \(accountBal)")
- }
- willSet(myBal){
- if(myBal>=100000){
- print("Bro this is HUGE")
- }
- }
- }// Notice all the difference between classes and struct scenarios, mutating,var and let constant for objects
- mutating  func addMoney(amount: Double){
- accountBal = accountBal + amount
- }
- }
  
- var mySBI = Bank(accountBal: 50000000)
- mySBI.addMoney(amount: 3000)
- mySBI.accountBal = 30000000
- 
- */
 
 /*
  // Delegation using Protocols
  
- protocol BringDelivery{
- func startBike(food: String)
- }
- class Customer {
- var myOrder: BringDelivery?
- }
- class SwiggyBhaiyya: BringDelivery {
- func startBike(food: String) {
- print("Bike Started and Delivered \(food)..!!")
- }
- }
- 
- let daya = Customer()
- let john = SwiggyBhaiyya()
- daya.myOrder = john
- daya.myOrder?.startBike(food: "Chiken Tandoori")
+protocol BringDelivery{
+    func startBike(food: String)
+}
+class Customer {
+    var myOrder: BringDelivery?
+    init() {
+        print("Delegate is \(self.myOrder as Any)")
+        print("Class is \(self)")
+    }
+}
+class SwiggyBhaiyya: BringDelivery {
+    func startBike(food: String) {
+        print("Class is \(self)")
+        print("Bike Started and Delivered \(food)..!!")
+    }
+}
+
+let daya = Customer()
+let john = SwiggyBhaiyya()
+daya.myOrder = john
+daya.myOrder?.startBike(food: "Chiken Tandoori")
+print("Delivered by \(daya.myOrder as Any)")
  
  */
+ 
 
 /*
  
  // Call Back, Closures
- func myOrder(food : String, completion: (String)->()) {
- if food == "Chicken" {
- completion("Chicken is Delivered")
- } else {
- completion("I will not Deliver Order")
- }
- }
- 
- func myReturnOrder(food: String, completion: ()->(String)){
- print(completion())
- }
- 
- myOrder(food: "Chicken") { chick in
- print(chick)
- }
- myOrder(food: "Hatred") { chick in
- print(chick)
- }
- 
- myReturnOrder(food: "Mutton") {
- 
- return "Mutton is not available Bro..!!"
- }
+
+func myOrder(food : String, completion: (String)->()) {
+    if food == "Chicken" {
+        completion("Chicken is Delivered")
+    } else {
+        completion("I will not Deliver Order")
+    }
+}
+
+func myReturnOrder(food: String, completion: ()->(String)){
+    print("Order is : \(food)")
+    print(completion())
+}
+
+myOrder(food: "Chicken") { chick in
+    print(chick)
+}
+myOrder(food: "Hatred") { chick in
+    print(chick)
+}
+
+myReturnOrder(food: "Mutton") {
+    return "Mutton is not available Bro..!!"
+}
+
+*/
+
+
  /*
   Important to understand:
   (String)->() // takes a String returns void
   ()->(String) // takes void returns a String
   */
  
- */
 
 
 
@@ -448,82 +450,97 @@ print(aot?.name)
  
  */
 
-// All in One Program
 
 /*
- final class YoStudent {
- var name:String?
- let allAngels = ["Archangel","Seraphs","Cherubs","Myriads","Messengers","Dayasagar","77",nil,""]
- var mapped : [Any]?
- final var oldName = "Dayasagar"
- init(name: String){
- self.oldName = name
- }
- func myNameis() -> () {
- switch self.name {
- case nil:
- return print("This Person is Absent Sir")
- case "DJ":
- return print("This Person is idiot Sir")
- //
- //        case "Dayasagar":
- //            return print("\(String(describing: name))is Present sir") it counts the first case if found same
- case allAngels[0]:
- self.mapped = allAngels.map({ angel in
- return "Jesus is the Archangel"
- })
- return print(self.mapped as Any)
- case allAngels[1]:
- self.mapped = allAngels.map({
- $0?.uppercased() as Any
- })
- return print(self.mapped as Any)
- case allAngels[2]:
- self.mapped = allAngels.sorted(by:{ $0?.lowercased() ?? "Sparrow" < $1?.uppercased() ?? "Jack" } ) as [Any]
- return print(self.mapped as Any)
- case allAngels[3]:
- self.mapped = allAngels.sorted { $0 ?? "" > $1 ?? "" } as [Any]
- return print(self.mapped as Any)
- case allAngels[4]:
- self.mapped = allAngels[0]?.cString(using: .unicode)
- return print(self.mapped as Any)
- case allAngels[5]:
- self.mapped = allAngels.compactMap({ angel in
- return angel
- })
- return print(self.mapped as Any)
- case allAngels[6]:
- self.mapped = allAngels.compactMap({       $0?.isEmpty     })
- return print(self.mapped as Any)
- case allAngels[8]:
- return print("I am NIL brooooo....!!!")
+
+// All in One Program
+
+// map, flatMap, compactMap, $0 $1, final, Switch Case
+
+final class YoStudent {
+    //static: used for properties or functions of class or struct and can be accessed by class/struct //level. With static keyword, we cannot override.
+    //final: used for class and class members (properties or functions). With final keyword, we //cannot override. Error inheritence not possible
+    var name:String?
+    let allAngels = ["Archangel","Seraphs","Cherubs","Myriads","Messengers","Dayasagar","77",nil,""]
+    var mapped : [Any]?
+    final var oldName = "Dayasagar"
+    let previousname: String = "Dayasagar"
+    init(name: String){
+        self.oldName = name
+    }
+    func myNameis() -> () {
+        switch self.name {
+            case nil:
+                return print("This Person is Absent Sir")
+            case "DJ":
+                return print("This Person is idiot Sir")
+            case allAngels[0]:
+                self.mapped = allAngels.map({ angel in
+                    return "Jesus is the Archangel"
+                })
+                return print(self.mapped as Any)
+            case allAngels[1]:
+                self.mapped = allAngels.map({
+                    $0?.uppercased() as Any
+                })
+                return print(self.mapped as Any)
+            case allAngels[2]:
+                self.mapped = allAngels.sorted(by:{ $0?.lowercased() ?? "Sparrow" < $1?.uppercased() ?? "Jack" } ) as [Any]
+                return print(self.mapped as Any)
+            case allAngels[3]:
+                self.mapped = allAngels.sorted { $0 ?? "" > $1 ?? "" } as [Any]
+                return print(self.mapped as Any)
+            case allAngels[4]:
+                self.mapped = allAngels[0]?.cString(using: .unicode)
+                //https://docs.swift.org/swift-book/documentation/the-swift-programming-language/stringsandcharacters/#UTF-8-Representation
+                return print(self.mapped as Any)
+            case allAngels[5]:
+                self.mapped = allAngels.compactMap({ angel in
+                    return angel
+                })
+                return print(self.mapped as Any)
+            case allAngels[6]:
+                self.mapped = allAngels.compactMap({       $0?.isEmpty     })
+                return print(self.mapped as Any)
+            case allAngels[8]:
+                return print("I am NIL brooooo....!!!")
+                
+            default:
+                return print("All are Absent Sir")
+        }
+    }
+}
+
+/*
+class MyStudent: YoStudent {
+// Error: Inheritance from a final class 'YoStudent'
+}
+*/
+
+let tyler = YoStudent(name: "Durden")
+print(tyler.oldName)//final variable can be modified within, but not overriden
+print(tyler.previousname)// let variable
+
+//https://stackoverflow.com/questions/35818703/swift-difference-between-final-var-and-non-final-var-final-let-and-non-final-l
+
+tyler.name = "Dayasagar"
+tyler.myNameis()
+tyler.name = "Archangel"
+tyler.myNameis()
+tyler.name = "Seraphs"
+tyler.myNameis()
+tyler.name = "Cherubs"
+tyler.myNameis()
+tyler.name = "Myriads"
+tyler.myNameis()
+tyler.name = "Messengers"
+tyler.myNameis()
+tyler.name = "77"
+tyler.myNameis()
+tyler.name = ""
+tyler.myNameis()
  
- default:
- return print("All are Absent Sir")
- }
- }
- }
- 
- let tyler = YoStudent(name: "Durden")
- 
- tyler.name = "Dayasagar"
- tyler.myNameis()
- tyler.name = "Archangel"
- tyler.myNameis()
- tyler.name = "Seraphs"
- tyler.myNameis()
- tyler.name = "Cherubs"
- tyler.myNameis()
- tyler.name = "Myriads"
- tyler.myNameis()
- tyler.name = "Messengers"
- tyler.myNameis()
- tyler.name = "77"
- tyler.myNameis()
- tyler.name = ""
- tyler.myNameis()
- 
- */
+*/
 
 
 /*
@@ -579,223 +596,237 @@ print(aot?.name)
  */
 
 
+/*
+
+//enum, static, typealias -> Keywords
+
+
+typealias Psycho = [[Int:String]]
+
+extension Psycho {
+    static var uniquePersonality = "Introvertness"
+}
+
+// enum with Associated Values
+enum Family {
+    case Manohar(daya: Psycho), Nandhlal(nihar: Int), Benedict(ashish: String), Srikanth
+}
+
+var meee: Array<[Int:String]> = [
+    [1:"Tyler Durden"],
+    [0:"Joker"],
+    [-1:"Aparichit"],
+    [-2:"Yuuichi"]
+]
+
+var hospital = Family.Manohar(daya: meee )
+ hospital = Family.Benedict(ashish: "Sign-Language")
+//: Notice the difference
+
+switch hospital {
+        
+    case .Manohar(daya: let daya):
+        print(daya)
+        print(Psycho.uniquePersonality)
+        print(Psycho())
+    case .Nandhlal:
+        print("Nope")
+    case .Benedict(ashish: let ashish):
+        print(ashish)
+        print("Ashish is here..!!")
+    case .Srikanth:
+        print("Nope")
+        
+}
+ 
+*/
+
 
 /*
  
- typealias Psycho = [[Int:String]]
+ // Set, Array, Tuple, Dictionary -> Collections
  
- extension Psycho {
- static var uniquePersonality = "Introvertness"
- }
- 
- enum Family {
- case Manohar(daya: Psycho), Nandhlal, Benedict, Srikanth
- }
- 
- var meee: Array<[Int:String]> = [
- [1:"Tyler Durden"],[0:"Joker"],[-1:"Aparichit"],[-2:"Yuuichi"]
- ]
- 
- var hospital = Family.Manohar(daya: meee )
- 
- //hospital = Family.Benedict //: Notice the difference
- 
- switch hospital {
- 
- case .Manohar(daya: let daya):
- print(daya)
- print(Psycho.uniquePersonality)
- print(Psycho())
- case .Nandhlal:
- print("Nope")
- case .Benedict:
- print("Nope")
- case .Srikanth:
- print("Nope")
- 
- }
+class Videogame {
+    
+    var title:String
+    var published:String
+    var rating:Double
+    init (title:String, published:String, rating:Double) {
+        self.title = title
+        self.published = published
+        self.rating = rating
+        print(title," ",published," ",rating)
+    }
+}
+
+let cyberpunk1 = Videogame(title: "King77", published: "DJ", rating: 7.7)
+let cyberpunk2 = Videogame(title: "Servant77", published: "DJ", rating: 7.7)
+let cyberpunk3 = Videogame(title: "Sorry77", published: "DJ", rating: 7.7)
+let cyberpunk4 = Videogame(title: "Servant77", published: "DJ", rating: 7.7)
+
+var myDictionary: [Int:Videogame] = [1:cyberpunk1,
+                                     2:cyberpunk2,
+                                     3:cyberpunk3,
+                                     4:cyberpunk4
+]
+var myArray = [cyberpunk1,cyberpunk2,cyberpunk3,cyberpunk4]
+var mySet: Set = ["Sets require Hashable Elements", "DJ", "DJ"]
+var myTuple = (mySet, (myDictionary, myArray))
+print(myTuple.1)
  
  */
 
 
+
+
+
 /*
- class Videogame {
  
- var title:String
- var published:String
- var rating:Double
- init (title:String, published:String, rating:Double) {
- self.title = title
- self.published = published
- self.rating = rating
- print(title," ",published," ",rating)
- }
- }
- 
- let cyberpunk1 = Videogame(title: "King77", published: "DJ", rating: 7.7)
- let cyberpunk2 = Videogame(title: "Servant77", published: "DJ", rating: 7.7)
- let cyberpunk3 = Videogame(title: "Sorry77", published: "DJ", rating: 7.7)
- let cyberpunk4 = Videogame(title: "Servant77", published: "DJ", rating: 7.7)
- 
- var myDictionary: [Int:Videogame] = [1:cyberpunk1,
- 2:cyberpunk2,
- 3:cyberpunk3,
- 4:cyberpunk4
- ]
- var myArray = [cyberpunk1,cyberpunk2,cyberpunk3,cyberpunk4]
- var mySet: Set = ["Sets require Hashable Elements", "DJ", "DJ"]
- var myTuple = (mySet, (myDictionary, myArray))
- print(myTuple.1)
- 
- */
-
-
-
 // Type Casting, Type Erasure, Optional Binding and Optional Chaining
 
-/*
+protocol Printable {
+    func printMe()
+}
+
+class Animal: Printable {
+    var name: String
+    var myDog: Dog?
+    
+    init(name: String) {
+        self.name = name
+    }
+    
+    func printMe() {
+        print("I'm a Animal")
+    }
+    
+    func makeSound() {
+        print("\(self.name) sound")
+    }
+    
+}
+
+class Dog: Animal {
+    
+    override func makeSound() {
+        print("Woof")
+    }
+    
+    override func printMe() {
+        print("I'm a Dog")
+    }
+    
+    func obeyCommand(command: String?){
+        guard let command = command else {
+            print("Command Not Given.. Idiot..!!!")
+            return
+        }
+        print("Okay, I will follow your command to \(command)")
+    }
+}
+
+// Type Casting
+
+let dog = Dog(name: "Fido")
+let myAnimal1: Animal = dog // Upcasting
+
+let animal2 = Animal(name: "Generic animal")
+
+let animals:[Animal] = [myAnimal1,animal2,dog]
+
+for animal in animals{
+    if let dog = animal as? Dog { // Downcasting, Binding(if let, guard let) also availabe
+        dog.makeSound()
+    } else {
+        print("This is not a Dog")
+    }
+}
+
+var myBreed: Animal?
+myBreed = Animal(name: "German Sheaperd")
+myBreed?.myDog = dog
+myBreed?.myDog?.makeSound() // Type - Dog : This is overriden
+myBreed?.makeSound() // Type - Animal : This is not overriden
+print(myBreed?.myDog?.name as Any) // Chaining "?"
+
+myBreed?.myDog?.obeyCommand(command: nil)
+
+// Type Erasure
+struct PrintableBox<T: Printable> {
+    let value: T
+    
+    init(_ value: T) {
+        self.value = value
+    }
+    
+    func printValue() {
+        value.printMe()
+    }
+}
+
+let box = PrintableBox(animal2) // Try all instances: dog, animal2, myAnimal
+box.printValue()
  
  
- protocol Printable {
- func printMe()
- }
- 
- class Animal: Printable {
- var name: String
- var myDog: Dog?
- 
- init(name: String) {
- self.name = name
- }
- 
- func printMe() {
- print("I'm a Animal")
- }
- 
- func makeSound() {
- print("\(self.name) sound")
- }
- 
- }
- 
- class Dog: Animal {
- 
- override func makeSound() {
- print("Woof")
- }
- 
- override func printMe() {
- print("I'm a Dog")
- }
- 
- func obeyCommand(command: String?){
- guard let command = command else {
- print("Command Not Given.. Idiot..!!!")
- return
- }
- print("Okay, I will follow your command to \(command)")
- }
- }
- 
- // Type Casting
- 
- let dog = Dog(name: "Fido")
- let myAnimal1: Animal = dog // Upcasting
- 
- //print(myAnimal1.name) // Output: Fido
- //myAnimal1.makeSound() // Output: Woof
- 
- let animal2 = Animal(name: "Generic animal")
- 
- let animals:[Animal] = [myAnimal1,animal2,dog]
- 
- for animal in animals{
- if let dog = animal as? Dog { // Downcasting, binding also availabe
- dog.makeSound()
- } else {
- animal.makeSound()
- }
- 
- }
- 
- //Optional Chaining and Binding
- 
- var myBreed: Animal?
- myBreed = Animal(name: "German Sheaperd")
- myBreed?.myDog = dog
- myBreed?.makeSound()
- print(myBreed?.myDog?.name) // Chaining
- 
- myBreed?.myDog?.obeyCommand(command: nil) // Binding
- 
- 
- // Type Erasure
- struct PrintableBox<T: Printable> {
- let value: T
- 
- init(_ value: T) {
- self.value = value
- }
- 
- func printValue() {
- value.printMe()
- }
- }
- 
- let box = PrintableBox(animal2) // Try all instances: dog, animal2, myAnimal
- box.printValue()
- 
- */
+*/
+
+
 
 
 
 /*
- protocol Sound {
- func makeSound()
- }
+
+// defer, keyPaths, protocol extension, self and Self
+
+protocol Sound {
+    func makeSound()
+}
+
+protocol Flyable {
+    func fly(name: String)
+}
+
+extension Flyable {
+    func fly(name: String) {
+        print("\(name) can fly")
+    }
+}
+
+extension Sound {
+    func makeSound() {
+        print("Ammaaazzzziiiiinnnnnnggggggg...")
+    }
+}
+
+class Pigeon: Sound, Flyable {
+    
+    var name: String
+    init(name: String) {
+        self.name = name
+    }
+    
+    func printName() -> Self { // This Self represents a Type
+        defer { print("\(self.name)") }
+        defer { print("is") }
+        defer { print("name") }
+        print("My")
+        return self // This self represents instance and is returning the type Pigeon
+    }
+    
+}
+
+let titleKeyPath = \Pigeon.name
+
+let pigeon = Pigeon(name: "Aura")
+
+pigeon.fly(name: pigeon[keyPath: titleKeyPath])
+pigeon.makeSound()
+print(pigeon.printName())
  
- protocol Flyable {
- func fly(name: String)
- }
- 
- extension Flyable {
- func fly(name: String) {
- print("\(name) can fly")
- }
- }
- 
- extension Sound {
- func makeSound() {
- print("Ammaaazzzziiiiinnnnnnggggggg...")
- }
- }
- 
- class Pigeon: Sound, Flyable {
- 
- var name: String
- init(name: String) {
- self.name = name
- }
- 
- func printName() -> Self { // This Self represents a Type
- defer { print("\(self.name)") }
- defer { print("is") }
- defer { print("name") }
- print("My")
- return self // This self represents instance and is returning the type Pigeon
- }
- 
- }
- 
- 
- let titleKeyPath = \Pigeon.name
- 
- let pigeon = Pigeon(name: "Aura")
- 
- pigeon.fly(name: pigeon[keyPath: titleKeyPath])
- pigeon.makeSound()
- print(pigeon.printName())
- */
+*/
+
+
+
 
 //
 //var numbers = [12, 4, 5, 6, 7, 3, 1, 15]
@@ -844,6 +875,7 @@ printFibonacciSeries()
  
  
 /*
+ 
  //Prime Numbers
  
  var num1 = readLine()
@@ -881,4 +913,67 @@ func isPalindrome() -> Bool? {
 
 print(isPalindrome() ?? false)
  
+*/
+
+
+/*
+
+
+ // override, super, repeat, rethrows -> Keywords
+ 
+extension String: Error{
+    
+}
+
+class Books{
+    var bookName: String
+    var number = 1
+    init(bookName:String){
+        self.bookName = bookName
+        print("\(self.bookName) is been overriden")
+        repeat {
+            print(self.number)
+            self.number += 1
+        } while self.number <= 20
+    }
+    func displayError(callback: () throws -> Void) rethrows {
+        try callback()
+        print("This Function is not yet overriden")
+    }
+}
+
+// Subclass
+class Author:Books{
+    override init(bookName:String){
+        
+        // Calling the super class initialiser
+        super.init(bookName:bookName)
+        print("This method has been overriden")
+    }
+    
+    func display(){
+        
+        // Calling the super class implementation
+        do {
+            try super.displayError(callback: alwaysThrows)
+            // Handle the result
+        } catch {
+            // Handle the error
+           // print("Error has been Handled")
+            print("\(error) has been catched")
+        }
+        print("This Funtion has been super called")
+        
+    }
+    
+    func alwaysThrows() throws {
+        throw "Error"
+    }
+}
+
+let myBook = Author(bookName: "Dayasagar")
+print(myBook.bookName)
+myBook.display()
+
+
 */
